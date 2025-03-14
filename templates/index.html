@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .weather-icon {
+            width: 100px;
+        }
+        .forecast-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .forecast-box {
+            background: rgba(255, 255, 255, 0.3);
+            margin: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            width: 120px;
+            text-align: center;
+        }
+        input, button {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">🌦 Weather App</h1>
+        <input type="text" id="location" class="form-control" placeholder="Enter city name">
+        <button class="btn btn-light" onclick="fetchWeather()">Get Weather</button>
+
+        <div id="weatherResult" class="mt-4"></div>
+        <h3 class="mt-4">Next 5 Hours</h3>
+        <div id="hourlyForecast" class="forecast-container"></div>
+
+        <h3 class="mt-4">Next 5 Days</h3>
+        <div id="dailyForecast" class="forecast-container"></div>
+    </div>
+
+    <script>
+        function fetchWeather() {
+            let location = document.getElementById("location").value;
+            fetch(`/weather?location=${location}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("weatherResult").innerHTML = `<p class="text-danger">${data.error}</p>`;
+                    } else {
+                        document.getElementById("weatherResult").innerHTML = `
+                            <h2>${data.location}</h2>
+                            <img class="weather-icon" src="http://openweathermap.org/img/wn/${data.current_weather.icon}.png" alt="Image Error">
+                            <p><strong>${data.current_weather.weather}</strong></p>
+                            <p>Temperature: ${data.current_weather.temperature}°C</p>
+                            <p>Feels Like: ${data.current_weather.feels_like}°C</p>
+                            <p>Humidity: ${data.current_weather.humidity}%</p>
+                            <p>Wind Speed: ${data.current_weather.wind_speed} m/s</p>
+                        `;
+
+                        let hourlyHTML = "";
+                        data.hourly_forecast.forEach(hour => {
+                            hourlyHTML += `
+                                <div class="forecast-box">
+                                    <p>${new Date(hour.time * 1000).getHours()}:00</p>
+                                    <img src="http://openweathermap.org/img/wn/${hour.icon}.png" class="weather-icon" alt="Weather Icon">
+                                    <p>${hour.temp}°C</p>
+                                    <p>${hour.weather}</p>
+                                </div>
+                            `;
+                        });
+                        document.getElementById("hourlyForecast").innerHTML = hourlyHTML;
+
+                        let dailyHTML = "";
+                        data.daily_forecast.forEach(day => {
+                            dailyHTML += `
+                                <div class="forecast-box">
+                                    <p>${new Date(day.date * 1000).toDateString()}</p>
+                                    <img src="http://openweathermap.org/img/wn/${day.icon}.png" class="weather-icon" alt="Weather Icon">
+                                    <p>${day.min_temp}°C - ${day.max_temp}°C</p>
+                                    <p>${day.weather}</p>
+                                </div>
+                            `;
+                        });
+                        document.getElementById("dailyForecast").innerHTML = dailyHTML;
+                    }
+                })
+                .catch(error => console.error("Error fetching weather data:", error));
+        }
+    </script>
+</body>
+</html>
