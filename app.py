@@ -14,15 +14,11 @@ from flask_cors import CORS
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:10000"}}) 
 
 logger.add("app.log", rotation="10MB", level="DEBUG")  #log file
 
 # MongoDB Configuration
-MONGO_URI = "mongodb://localhost:27017/weatherDB"
-client = pymongo.MongoClient(MONGO_URI)
-db = client.weatherDB
-weather_collection = db.weather_searches
+
 
 # OpenWeatherMap API Key
 WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # Stored in .env file
@@ -102,8 +98,7 @@ def get_weather():
     ],
 }
 
-    inserted_data = weather_collection.insert_one(weather_data)
-    weather_data["_id"] = str(inserted_data.inserted_id)
+    
     return jsonify(weather_data)
 
 # UPDATE: Modify stored weather data
@@ -116,9 +111,7 @@ def update_weather():
     if not record_id or not updated_data:
         return jsonify({"error": "Missing record ID or data"}), 400
 
-    weather_collection.update_one(
-        {"_id": ObjectId(record_id)}, {"$set": updated_data}
-    )
+    
     return jsonify({"message": "Weather data updated successfully"}), 200
 
 # DELETE: Remove a record
@@ -128,7 +121,6 @@ def delete_weather():
     if not record_id:
         return jsonify({"error": "Missing record ID"}), 400
 
-    weather_collection.delete_one({"_id": ObjectId(record_id)})
     return jsonify({"message": "Weather data deleted successfully"}), 200
 
 # EXPORT: Convert stored data into JSON, CSV, or PDF
