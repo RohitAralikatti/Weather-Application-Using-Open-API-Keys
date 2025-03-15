@@ -46,6 +46,7 @@
         <h1 class="mb-4">🌦 Weather App</h1>
         <input type="text" id="location" class="form-control" placeholder="Enter city name">
         <button class="btn btn-light" onclick="fetchWeather()">Get Weather</button>
+        <button class="btn btn-info" onclick="showInfo()">Info</button> <!-- ✅ Added Info Button -->
 
         <div id="weatherResult" class="mt-4"></div>
         <h3 class="mt-4">Next 5 Hours</h3>
@@ -102,6 +103,11 @@
                     }
                 })
                 .catch(error => console.error("Error fetching weather data:", error));
+        }
+
+        // ✅ Info Button Function
+        function showInfo() {
+            alert("Created by Rohit Aralikatti\n\nLearn more about PM Accelerator: https://www.linkedin.com/school/pmaccelerator/");
         }
     </script>
 </body>
