@@ -4,32 +4,52 @@
   font-family: Arial, sans-serif;
 }
 
+/* Input Field */
 input {
   padding: 8px;
   margin: 10px;
   width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
+/* Buttons */
 button {
   padding: 8px 12px;
+  margin: 5px;
   background: #007bff;
   color: white;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
+  transition: 0.3s ease;
 }
 
 button:hover {
   background: #0056b3;
 }
 
+/* Info Button Styling */
+.info-button {
+  background: #28a745;
+}
+
+.info-button:hover {
+  background: #218838;
+}
+
+/* Weather Container */
 .weather-container {
   margin-top: 20px;
   padding: 20px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Error Message */
 .error {
   color: red;
+  font-weight: bold;
 }

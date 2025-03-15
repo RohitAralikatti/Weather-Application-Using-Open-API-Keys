@@ -10,13 +10,13 @@ from dotenv import load_dotenv
 from loguru import logger
 from flask_cors import CORS
 
-# Load environment variables
+
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}) 
-# ✅ Configure Loguru Logging
-logger.add("app.log", rotation="10MB", level="DEBUG")  # Auto-rotating log file
+
+logger.add("app.log", rotation="10MB", level="DEBUG")  #log file
 
 # MongoDB Configuration
 MONGO_URI = "mongodb://localhost:27017/weatherDB"
@@ -25,9 +25,9 @@ db = client.weatherDB
 weather_collection = db.weather_searches
 
 # OpenWeatherMap API Key
-WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # Store in .env file
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")  # Stored in .env file
 
-# ✅ Function to get latitude & longitude from city name
+# Function to get latitude & longitude from city name
 def get_lat_lon(city):
     geocode_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid=7dff46e67950916775740d2f068e79bc"
     response = requests.get(geocode_url)
@@ -49,7 +49,7 @@ def home():
 @app.route("/weather", methods=["GET"])
 def get_weather():
     location = request.args.get("location")
-    date_range = request.args.get("date_range", "latest")  # New: Allow date range input
+    date_range = request.args.get("date_range", "latest")  #Allow date range input
 
     if not location:
         return jsonify({"error": "Location is required"}), 400
@@ -67,7 +67,7 @@ def get_weather():
 
     data = response.json()
 
-    # ✅ Extract Weather Data
+    # Extracting the Weather Data
     weather_data = {
     "location": location,
     "date_range": date_range,
@@ -79,24 +79,24 @@ def get_weather():
         "wind_speed": data["current"]["wind_speed"],
         "icon": data["current"]["weather"][0]["icon"],
     },
-    # ✅ Fixed Hourly Forecast: Added icon and weather description
+    # Hourly Forecast
     "hourly_forecast": [
         {
             "time": h["dt"],
             "temp": h["temp"],
-            "icon": h["weather"][0]["icon"],  # Added icon
-            "weather": h["weather"][0]["description"],  # Added weather description
+            "icon": h["weather"][0]["icon"],  
+            "weather": h["weather"][0]["description"], 
         }
         for h in data["hourly"][:5]
     ],
-    # ✅ Fixed Daily Forecast: Added icon and weather description
+    # Fixed Daily Forecast
     "daily_forecast": [ 
         {
             "date": d["dt"],
             "min_temp": d["temp"]["min"],
             "max_temp": d["temp"]["max"],
-            "icon": d["weather"][0]["icon"],  # Added icon
-            "weather": d["weather"][0]["description"],  # Added weather description
+            "icon": d["weather"][0]["icon"],  
+            "weather": d["weather"][0]["description"],  
         }
         for d in data["daily"][:5]
     ],
@@ -106,7 +106,7 @@ def get_weather():
     weather_data["_id"] = str(inserted_data.inserted_id)
     return jsonify(weather_data)
 
-# ✅ UPDATE: Modify stored weather data
+# UPDATE: Modify stored weather data
 @app.route("/update", methods=["PUT"])
 def update_weather():
     data = request.json
@@ -121,7 +121,7 @@ def update_weather():
     )
     return jsonify({"message": "Weather data updated successfully"}), 200
 
-# ✅ DELETE: Remove a record
+# DELETE: Remove a record
 @app.route("/delete", methods=["DELETE"])
 def delete_weather():
     record_id = request.args.get("_id")
@@ -131,7 +131,7 @@ def delete_weather():
     weather_collection.delete_one({"_id": ObjectId(record_id)})
     return jsonify({"message": "Weather data deleted successfully"}), 200
 
-# ✅ EXPORT: Convert stored data into JSON, CSV, or PDF
+# EXPORT: Convert stored data into JSON, CSV, or PDF
 def clean_data(data):
     for record in data:
         record["_id"] = str(record["_id"])
@@ -165,6 +165,17 @@ def export_data():
 
     else:
         return jsonify({"error": "Invalid format. Use json, csv, or pdf."}), 400
+    
+@app.route("/info", methods=["GET"])
+def project_info():
+    info = {
+        "developer": "Rohit Aralikatti",
+        "project": "Weather App with Google Maps & YouTube Integration",
+        "description": "This project fetches live weather data, visualizes locations on Google Maps, and integrates YouTube for location-based videos.",
+        "linkedin": "https://www.linkedin.com/school/pmaccelerator/"
+    }
+    return jsonify(info)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

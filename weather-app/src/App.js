@@ -16,20 +16,26 @@ function App() {
 
     try {
       const response = await fetch(`http://127.0.0.1:5000/weather?location=${location}`);
-      
       const data = await response.json();
       setWeatherData(data);
       setError("");
-      console.log(data)
+      console.log(data);
     } catch (err) {
       setError("Error fetching weather data. Please try again.");
       console.error(err);
     }
   };
 
+  // Function to show PM Accelerator Info
+  const showInfo = () => {
+    alert("PM Accelerator helps aspiring and current product managers accelerate their careers. Learn more: https://www.linkedin.com/school/pmaccelerator/");
+  };
+
   return (
     <div className="container">
       <h1>Weather App</h1>
+      <p>Developed by <strong>Rohit Aralikatti</strong></p>
+      
       <input
         type="text"
         placeholder="Enter city name"
@@ -37,6 +43,7 @@ function App() {
         onChange={(e) => setLocation(e.target.value)}
       />
       <button onClick={fetchWeather}>Get Weather</button>
+      <button className="info-button" onClick={showInfo}>Info</button>
 
       {error && <p className="error">{error}</p>}
 
@@ -47,7 +54,10 @@ function App() {
           <p>Humidity: {weatherData.current_weather.humidity}%</p>
           <p>Wind Speed: {weatherData.current_weather.wind_speed} m/s</p>
           <p>Condition: {weatherData.current_weather.weather}</p>
-          <img src={weatherData.current_weather.icon} alt="Weather icon" />
+          <img 
+            src={`http://openweathermap.org/img/wn/${weatherData.current_weather.icon}.png`} 
+            alt="Weather icon" 
+          />
         </div>
       )}
     </div>

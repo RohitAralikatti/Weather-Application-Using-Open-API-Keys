@@ -7,8 +7,8 @@ const containerStyle = {
 };
 
 const center = {
-  lat: 40.7128, // Default latitude (New York)
-  lng: -74.0060, // Default longitude (New York)
+  lat: 40.7128, 
+  lng: -74.0060, 
 };
 
 const GoogleMapComponent = ({ location }) => {
