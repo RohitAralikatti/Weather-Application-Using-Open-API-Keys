@@ -13,4 +13,4 @@ python-dotenv==0.15.0
 loguru==0.5.3
 bson==0.5.10
 pdfkit==1.0.0
-wkhtmltopdf==0.12.6
+
