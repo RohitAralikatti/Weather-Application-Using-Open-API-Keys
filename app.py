@@ -177,5 +177,4 @@ def project_info():
     return jsonify(info)
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
